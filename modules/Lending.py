@@ -270,10 +270,13 @@ def get_frr_or_min_daily_rate(cur):
     else:
         min_daily_rate = Decimal(Config.get("BOT", "mindailyrate", None, 0.003, 5)) / 100
         frrasmin = Config.getboolean('BOT', 'frrasmin', False)
-        frrdelta = Decimal(Config.get('BOT', 'frrdelta', 0.0000))
+        frrdelta = Decimal(Config.get('BOT', 'frrdelta', 0.0000)) / 100
 
     if exchange == 'BITFINEX' and frrasmin:
+        frr_rate = Decimal(api.get_frr(cur))
+        log.log("TAH said: FRR now is {0} without any modifiy".format(frr_rate))
         frr_rate = Decimal(api.get_frr(cur)) + frrdelta
+        log.log("TAH said: FRR now is {0} with add delta any modifiy".format(frr_rate))
         if frr_rate > min_daily_rate:
             log.log("Using FRR as mindailyrate {0}% for {1}".format(frr_rate * 100, cur))
             return frr_rate
